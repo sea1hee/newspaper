@@ -1,7 +1,9 @@
+import { Route, Routes } from '../node_modules/react-router-dom/dist/index';
 import './App.css';
 import Categories from './components/Categories';
 import NewsList from './components/NewsList';
 import { useCallback, useState } from 'react';
+import NewsPage from './pages/NewsPage';
 
 const App = () => {
 
@@ -10,10 +12,10 @@ const App = () => {
 
 
   return (
-    <>
-      <Categories category={category} onSelect={onSelect}/>
-      <NewsList category={category}/>
-    </>
+    <Routes>
+      <Route path="/" element={<NewsPage/>} />
+      <Route path="/:category" element={<NewsPage />} />
+    </Routes>
   );
 }
 
