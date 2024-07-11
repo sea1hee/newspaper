@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import NewsItem from './NewsItem';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const NewsListBlock = styled.div`
     box-sizing: border-box;
@@ -10,25 +12,50 @@ const NewsListBlock = styled.div`
     @media screen and (max-width: 768px){
         width: 100%;
         padding-left: 1rem;
-        pading-right: 1rem;
+        padding-right: 1rem;
     }
 `;
 
-const sampleArticle = {
-    title: "제목",
-    description : "내용",
-    url: 'https://google.com',
-    urlToImage: 'https://via.placeholder.com/160',
-};
-
 const NewsList = () => {
+
+    const [articles, setArticles] = useState(null);
+    const [isLoading, setLoading] = useState(false);
+
+    const KEY = process.env.REACT_APP_NEWS_API_KEY;
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+              const response = await axios.get(
+                'https://newsapi.org/v2/top-headlines?country=kr&apiKey='+KEY
+              )
+              setArticles(response.data.articles);
+            } catch(e){
+                console.log(e);
+            }
+            setLoading(false);
+        };
+        fetchData();
+    }, []);
+
+    console.log(articles);
+
+    if(isLoading){
+        console.log("isLoading");
+        return <NewsListBlock>대기 중...</NewsListBlock>
+    }
+
+    if(!articles){
+        console.log("articles is null");
+        return null;
+    }
 
     return (
         <NewsListBlock>
-            <NewsItem article={sampleArticle}/>
-            <NewsItem article={sampleArticle}/>
-            <NewsItem article={sampleArticle}/>
-            <NewsItem article={sampleArticle}/>
+            {articles.map(article => (
+                <NewsItem key={article.url} article={article}/>
+            ))}
         </NewsListBlock>
     )
 
